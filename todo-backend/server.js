@@ -79,7 +79,7 @@ const corsOptions = {
     const allowedOrigins = [
       "http://localhost:5173",
       "http://localhost:3000",
-      "https://your-frontend-app.vercel.app", // Replace with your actual frontend URL
+      "https://to-do-list-web-application-o9z2.vercel.app/", // Replace with your actual frontend URL
       process.env.CLIENT_URL,
     ];
 

@@ -11,6 +11,7 @@ const {
   getTaskStats,
   getTasksDueToday,
   toggleTaskCompletion,
+  toggleSubtaskCompletion,
 } = require("../controllers/taskController");
 const { authenticateToken } = require("../middleware/auth");
 const {
@@ -539,5 +540,40 @@ router.delete(
  *         description: Task not found
  */
 router.patch("/:id/toggle-completion", authenticateToken, toggleTaskCompletion);
+
+/**
+ * @swagger
+ * /api/tasks/{taskId}/subtasks/{subtaskId}/toggle:
+ *   patch:
+ *     summary: Toggle subtask completion status
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Task ID
+ *       - in: path
+ *         name: subtaskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Subtask ID
+ *     responses:
+ *       200:
+ *         description: Subtask completion status toggled successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Task or subtask not found
+ */
+router.patch(
+  "/:taskId/subtasks/:subtaskId/toggle",
+  authenticateToken,
+  toggleSubtaskCompletion
+);
 
 module.exports = router;

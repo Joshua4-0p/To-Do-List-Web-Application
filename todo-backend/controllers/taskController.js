@@ -405,6 +405,44 @@ const toggleTaskCompletion = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * @desc    Toggle subtask completion status
+ * @route   PATCH /api/tasks/:taskId/subtasks/:subtaskId/toggle
+ * @access  Private
+ */
+const toggleSubtaskCompletion = asyncHandler(async (req, res) => {
+  const { taskId, subtaskId } = req.params;
+
+  const task = await Task.findOne({
+    _id: taskId,
+    user_id: req.user.userId,
+  });
+
+  if (!task) {
+    return res.status(404).json({
+      success: false,
+      message: "Task not found",
+    });
+  }
+
+  const subtask = task.subtasks.id(subtaskId);
+  if (!subtask) {
+    return res.status(404).json({
+      success: false,
+      message: "Subtask not found",
+    });
+  }
+
+  subtask.is_completed = !subtask.is_completed;
+  await task.save();
+
+  res.json({
+    success: true,
+    message: "Subtask completion status toggled successfully",
+    data: { task },
+  });
+});
+
 module.exports = {
   getTasks,
   getTask,
@@ -417,4 +455,5 @@ module.exports = {
   getTaskStats,
   getTasksDueToday,
   toggleTaskCompletion,
+  toggleSubtaskCompletion,
 };
