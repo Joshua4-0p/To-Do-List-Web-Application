@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -89,6 +88,60 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const getProfile = async () => {
+    try {
+      const response = await axios.get("/api/auth/profile");
+      setUser(response.data.data.user);
+      return { success: true, user: response.data.data.user };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to fetch profile",
+      };
+    }
+  };
+
+  const updateProfile = async (profileData) => {
+    try {
+      const response = await axios.put("/api/auth/profile", profileData);
+      setUser(response.data.data.user);
+      return { success: true, user: response.data.data.user };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to update profile",
+      };
+    }
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const response = await axios.put("/api/auth/change-password", {
+        currentPassword,
+        newPassword,
+      });
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to change password",
+      };
+    }
+  };
+
+  const deactivateAccount = async () => {
+    try {
+      const response = await axios.delete("/api/auth/account");
+      logout();
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to deactivate account",
+      };
+    }
+  };
+
   const value = {
     user,
     token,
@@ -97,6 +150,10 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!token,
+    getProfile,
+    updateProfile,
+    changePassword,
+    deactivateAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

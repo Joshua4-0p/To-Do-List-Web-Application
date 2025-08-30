@@ -87,15 +87,17 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
-  const toggleTaskComplete = async (taskId, isCompleted) => {
+  const toggleTaskComplete = async (taskId) => {
     try {
-      const response = await axios.patch(`/api/tasks/${taskId}/toggle`, {
-        is_completed: isCompleted,
-      });
-      setTasks((prev) =>
-        prev.map((task) => (task._id === taskId ? response.data.task : task))
+      const response = await axios.patch(
+        `/api/tasks/${taskId}/toggle-completion`
       );
-      return { success: true };
+      setTasks((prev) =>
+        prev.map((task) =>
+          task._id === taskId ? response.data.data.task : task
+        )
+      );
+      return { success: true, task: response.data.data.task };
     } catch (error) {
       return {
         success: false,
@@ -124,6 +126,31 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  const getTaskStats = async () => {
+    try {
+      const response = await axios.get("/api/tasks/stats");
+      return { success: true, stats: response.data.data.stats };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to fetch stats",
+      };
+    }
+  };
+
+  const getTasksDueToday = async () => {
+    try {
+      const response = await axios.get("/api/tasks/due-today");
+      return { success: true, tasks: response.data.data.tasks };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.message || "Failed to fetch tasks due today",
+      };
+    }
+  };
+
   const value = {
     tasks,
     loading,
@@ -135,6 +162,8 @@ export const TaskProvider = ({ children }) => {
     deleteTask,
     toggleTaskComplete,
     toggleSubtaskComplete,
+    getTaskStats,
+    getTasksDueToday,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
