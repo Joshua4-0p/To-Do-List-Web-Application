@@ -51,28 +51,34 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
-
+    setErrors({});
     setLoading(true);
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({ confirmPassword: "Passwords do not match" });
+      setLoading(false);
+      return;
+    }
+
+    // Call context register (only email and password)
     const result = await register(formData.email, formData.password);
 
     if (result.success) {
       addNotification({
         type: "success",
-        title: "Account Created!",
-        message:
-          "Welcome to TaskMaster. You can now start managing your tasks.",
+        title: "Account created!",
+        message: "You have successfully registered.",
       });
-      navigate("/");
+      navigate("/login");
     } else {
+      setErrors({ general: result.error });
       addNotification({
         type: "error",
         title: "Registration Failed",
         message: result.error,
       });
     }
-
     setLoading(false);
   };
 
