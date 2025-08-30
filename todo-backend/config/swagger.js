@@ -22,7 +22,7 @@ const swaggerDefinition = {
     {
       url:
         process.env.NODE_ENV === "production"
-          ? "https://your-app-name.onrender.com/api"
+          ? "https://https://to-do-list-web-application-txb8.onrender.com/api"
           : "http://localhost:5000/api",
       description:
         process.env.NODE_ENV === "production"
